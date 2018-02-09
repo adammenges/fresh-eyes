@@ -1,3 +1,5 @@
+# pip install pillow
+
 import os, json
 from PIL import Image
 dir_path = os.path.dirname(os.path.realpath(__file__))
