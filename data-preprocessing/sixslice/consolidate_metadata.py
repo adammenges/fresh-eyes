@@ -3,12 +3,13 @@ import os, time
 DELETE_FILES = True
 
 def main():
-    basepath = "W:\\Box Sync\\SG 2018 Datasets\\180312 house"
+    basepath = "W:\\Box Sync\\SG 2018 Datasets\\180314 fourview - 100"
+    do_process_root = True
     tic = time.clock()
 
     collected_metadata = []
     for root, dirs, files in walklevel(basepath):
-        if (root == basepath): continue
+        if (not do_process_root) and (root == basepath): continue
         for full_filename in files:
             filename, file_extension = os.path.splitext(full_filename)
             if file_extension != ".txt": continue
@@ -22,7 +23,7 @@ def main():
             if (DELETE_FILES): os.remove(os.path.join(root,full_filename))
     
     collected_metadata[-1] = collected_metadata[-1].strip()
-    f = open(os.path.join(basepath,"metadata.csv"), "w")
+    f = open(os.path.join(basepath,"_metadata.csv"), "w")
     f.writelines(collected_metadata)
     f.close()
     
