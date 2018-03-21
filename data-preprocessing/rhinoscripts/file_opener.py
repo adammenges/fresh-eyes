@@ -2,7 +2,7 @@ import rhinoscriptsyntax as rs
 import os, time
 
 def main():
-    basepath = "W:\\Box Sync\\SG 2018 Datasets\\HOUSE MASSING DATASET\\3dm"
+    basepath = "W:\\Box Sync\\Berkeley\\Courses Active\\100d s18\\100d UNCOMMONS\\Sample Files\\180320 - Ricardo"
     #basepath = os.path.join(basepath,"EE- Box")
     
     max_flrs = 99 # maximum number of folders to open
