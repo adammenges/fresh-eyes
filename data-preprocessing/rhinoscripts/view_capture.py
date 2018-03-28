@@ -16,11 +16,16 @@ def main():
     rs.ZoomExtents(view)
     #rs.ViewCameraLens(view,25)
     
-    basepath = "C:\\Users\\ksteinfe\\Desktop\\TEMP"
-    
-    capture_view_antialias(os.path.join(basepath,"anti 1.png"), (200,200) )
+    #basepath = "C:\\Users\\ksteinfe\\Desktop\\TEMP"
+    basepath = "G:\\TEMP"
+    #capture_view_antialias(os.path.join(basepath,"anti 1.png"), (200,200) )
     capture_view_antialias(os.path.join(basepath,"anti 2.png"), (200,200), 4.0 )
-    capture_view(os.path.join(basepath,"reg.png"), (200,200) )
+    #capture_view(os.path.join(basepath,"reg.png"), (200,200) )
+
+#def fetch(
+#    obj = rs.GetObject("Pick any object")
+
+#def patch(curve)
 
 def set_active_view(viewportName):
     RhinoDocument = Rhino.RhinoDoc.ActiveDoc
@@ -39,7 +44,7 @@ def capture_view_antialias(filePath, save_size=1.0, scale_fac = 2.0 ): # scale_f
     except:
         save_size = vp.Size.Width*save_size,vp.Size.Height*save_size
         capture_size = System.Drawing.Size(save_size[0]*scale_fac,save_size[1]*scale_fac)
-    
+
     capture = view.CaptureToBitmap( capture_size )
     capture = resize_bitmap(capture,save_size)
     capture.Save(filePath);

@@ -5,14 +5,18 @@ import System.Drawing
 import os
 
 def main():
+
+    rs.CurrentLayer("ViewerBox")
+    surface=patch_first_object_on_layer("ViewerBox")
+    patch_mat=rs.MaterialColor(-1, (127, 255, 191))
     
-    print get_first_object_on_layer("ViewerBox")
-    
+    index=rs.AddMaterialToLayer("ViewerBox")
+    print index
+    #rs.LayerMaterialIndex(index,patch_mat)
     
     set_active_view("Perspective")
     view = rs.CurrentView()
-    set_disp_mode("Arctic")
-    
+    set_disp_mode("Shaded")
     rs.ViewProjection(view,2)
     rs.ViewCameraTarget(view,(-6,6,6),(0,0,0))
     
@@ -20,18 +24,21 @@ def main():
     rs.ZoomExtents(view)
     #rs.ViewCameraLens(view,25)
     
-    basepath = "C:\\Users\\ksteinfe\\Desktop\\TEMP"
+    #basepath = "C:\\Users\\ksteinfe\\Desktop\\TEMP"
+    basepath = "G:\\TEMP"
     
     capture_view_antialias(os.path.join(basepath,"anti 1.png"), (200,200) )
-    capture_view(os.path.join(basepath,"reg.png"), (200,200) )
+    #capture_view(os.path.join(basepath,"reg.png"), (200,200) )
 
 
-def get_first_object_on_layer(layername):
+def patch_first_object_on_layer(layername):
     rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
+    surface=rs.AddPlanarSrf(rhobjs[0])
     try:
-        return rhobjs[0]
+        return surface
     except:
         return False
+
 
 def set_active_view(viewportName):
     RhinoDocument = Rhino.RhinoDoc.ActiveDoc
