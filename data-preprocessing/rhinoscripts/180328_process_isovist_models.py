@@ -7,33 +7,32 @@ import os
 def main():
 
     rs.CurrentLayer("ViewerBox")
-    surface=patch_first_object_on_layer("ViewerBox")
-    patch_mat=rs.MaterialColor(-1, (127, 255, 191))
-    
-    index=rs.AddMaterialToLayer("ViewerBox")
-    print index
-    #rs.LayerMaterialIndex(index,patch_mat)
-    
+    patch_first_object_on_layer("ViewerBox",(255,233,233))#set color here
+    rs.LayerPrintWidth("ViewerBox", width=0.01)#set print width here
+    rs.Command("PrintDisplay"+" _-Enter")
+
     set_active_view("Perspective")
     view = rs.CurrentView()
-    set_disp_mode("Shaded")
+    set_disp_mode("Rendered")
     rs.ViewProjection(view,2)
     rs.ViewCameraTarget(view,(-6,6,6),(0,0,0))
-    
     rs.ViewCameraLens(view,25)
     rs.ZoomExtents(view)
-    #rs.ViewCameraLens(view,25)
-    
-    #basepath = "C:\\Users\\ksteinfe\\Desktop\\TEMP"
-    basepath = "G:\\TEMP"
-    
-    capture_view_antialias(os.path.join(basepath,"anti 1.png"), (200,200) )
-    #capture_view(os.path.join(basepath,"reg.png"), (200,200) )
+    rs.ViewCameraLens(view,25)
+
+    #basepath = "C:\\Users\\ksteinfe\\Desktop\\TEMP" #Kyle's Desktop
+    #basepath = "G:\\TEMP" #Matt's Desktop
+    basepath = "C:\\Users\\Matt\\Desktop\\Temp" #Matt's Laptop
+
+    #capture_view_antialias(os.path.join(basepath,"anti 1.png"), (200,200) )
+    capture_view(os.path.join(basepath,"reg.png"), (1000,1000) )
 
 
-def patch_first_object_on_layer(layername):
+def patch_first_object_on_layer(layername,color):
     rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
     surface=rs.AddPlanarSrf(rhobjs[0])
+    material_index = rs.AddMaterialToObject(surface)# add new material and get its index
+    rs.MaterialColor(material_index, color)# assign material color
     try:
         return surface
     except:
