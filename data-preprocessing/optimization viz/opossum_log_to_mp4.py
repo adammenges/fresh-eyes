@@ -1,17 +1,16 @@
 import imageio
 import glob, os, shutil
 from PIL import Image, ImageSequence, ImageFont, ImageDraw
+from zipfile import ZipFile
 
 """
 VARIABLES
 """
-src_path = "C:\Users\kyle\Downloads\Opossum Default Lobed 10pt\Opossum Default Lobed 10pt"
-output_filename = os.path.split(src_path)[1] # output_filename defaults to folder name
-print (output_filename)
-frames_per_sec = 24
+zip_filepath = os.path.normpath("C:\Users\kyle\Downloads\Opossum Default Almond.zip")
 
+frames_per_sec = 24
 show_local_best = True
-local_best_range = 20
+local_best_range = 72 # range of past iterations to find local best. compare to frames_per_sec
 
 # font = ImageFont.truetype(<font-file>, <font-size>)
 font = ImageFont.truetype("fonts/OpenSans-Light.ttf", 12)
@@ -25,10 +24,24 @@ remove_temp_directory = True
 """
 """
 
-src_path = os.path.normpath(src_path)
-tmp_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],"tmp")
+output_directory = os.path.dirname(zip_filepath)
+output_filename = os.path.splitext(os.path.split(zip_filepath)[1])[0] # output_filename mimics zip file name
+print (output_filename)
+
+#tmp_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],"tmp")
+#src_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],"src")
+tmp_path = os.path.join(output_directory,"tmp")
+src_path = os.path.join(output_directory,"src")
 #print(tmp_path)
 if not os.path.exists(tmp_path): os.makedirs(tmp_path)
+if not os.path.exists(src_path): os.makedirs(src_path)
+
+with ZipFile(zip_filepath, 'r') as zf:
+    #zip.printdir() # printing all the contents of the zip file
+    zf.extractall(src_path)
+
+#src_path = "C:\Users\kyle\Downloads\Opossum Default Lobed 10pt\Opossum Default Lobed 10pt"
+#src_path = os.path.normpath(src_path)
 
 src_files = [os.path.join(src_path,file) for file in os.listdir(src_path) if file.endswith(".png")]
 
@@ -54,7 +67,7 @@ imgtups = zip(fitnesses,src_files)
 global_best = imgtups[0]
 local_best = imgtups[0]
 for n, itup in enumerate(imgtups):
-    if itup[0] > global_best[0]: 
+    if itup[0] >= global_best[0]: 
         #print(("found better instance: "+fitness_text_format+" > "+fitness_text_format+"").format(itup[0], global_best[0]))
         global_best = itup
     
@@ -96,9 +109,11 @@ for n, itup in enumerate(imgtups):
     
     
 src_files = [os.path.join(tmp_path,file) for file in os.listdir(tmp_path)]    
-writer = imageio.get_writer(output_filename+'.mp4', fps=frames_per_sec)
+writer = imageio.get_writer(os.path.join(output_directory,output_filename+'.mp4'), fps=frames_per_sec)
 for im in src_files:
     writer.append_data(imageio.imread(im))
 writer.close()
 
-if remove_temp_directory: shutil.rmtree(tmp_path)
+if remove_temp_directory: 
+    shutil.rmtree(tmp_path)
+    shutil.rmtree(src_path)
