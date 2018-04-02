@@ -12,3 +12,4 @@ Simple lobe model server
 	* `pip3 install flask==0.12.2`
 	* `pip3 install Flask-Cors`
 
+There's an Insomnia workspace in the repo with some examples on API calls, too.
