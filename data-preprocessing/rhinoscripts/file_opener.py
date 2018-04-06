@@ -3,7 +3,7 @@ import os, time
 
 def main():
     #basepath = "C:\\Users\\ksteinfe\\Desktop\\TEST"
-    basepath = "C:\\Users\\Matt\\Desktop\\Temp"
+    basepath = "C:\\Users\\ksteinfe\\Desktop\\TEST"
     
     max_flrs = 99 # maximum number of folders to open
     max_fils = 99 # maximum number of files to open in each folder
