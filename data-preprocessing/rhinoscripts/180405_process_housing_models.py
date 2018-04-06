@@ -31,17 +31,18 @@ def main():
             rs.Command('_-Open {} _Enter'.format('"'+filepath+'"'))
             t = round(time.clock()-file_tic)
             print(filename+"\ttime:\t"+str(t))
-
-            zoom_viewer("ViewerBox",35)#set factor for how far you want to zoom out from viewer
-            patch_first_object_on_layer("ViewerBox",(255,233,233))#set color here
-            rs.LayerPrintWidth("ViewerBox", width=0.01)#set print width here
+            
+            rs.CurrentLayer("SITE")
+            rs.Command("SelText Delete SelPts Delete")
+            zoom_viewer("SITE")#set focus layer
+            patch_site("SITE",(255,233,233))#set color here
+            patch_opening("DOOR",(150,150,150))#set color here
+            patch_opening("WINDOW",(150,150,150))#set color here
+            rs.Command("SelCrv Delete")
+            rs.LayerPrintWidth("SITE", width=0.01)#set print width here
             rs.Command("PrintDisplay"+"s"+" _-Enter"+"o"+" _-Enter"+" _-Enter")#ensures lineweights are displaying
+            zoom_out()
             capture_view_antialias(os.path.join(basepath,filename+"_antialias.png"), (1000,1000) )#changeimagesize
-            #capture_view(os.path.join(basepath,filename+".png"), (500,500) )#changeimagesize
-            width="1200" #pixel count for width
-            height="1200" #pixel count for height
-            savepath=basepath + "\\" + filename +".png"
-            #rs.Command("-ViewCaptureToFile scaledrawing=yes w "+width+" h "+height+" "+savepath+" ")
             fil_cnt+=1
             if fil_cnt > max_fils: break
 
@@ -52,22 +53,25 @@ def main():
     print("TOTAL\ttime:\t"+str(t))
 
 
-def zoom_viewer(layername,f):
+def zoom_viewer(layername):
         rs.CurrentLayer(layername)
+        rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
         set_active_view("Perspective")
         view = rs.CurrentView()
         set_disp_mode("Rendered")
         rs.ViewProjection(view,2)
-        rs.ViewCameraTarget(view,(-1*f,1*f,1*f),(0,0,0))
+        rs.ViewCameraTarget(view,(1,-1.5,1),(0,0,0))
         rs.ViewCameraLens(view,30)
-        #rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
-        #rs.SelectObject(rhobjs[0])
-        #rs.ZoomSelected()
+        rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
+        rs.SelectObject(rhobjs[0])
+        rs.ZoomSelected()
+        rs.UnselectAllObjects()
 
 def zoom_out():
-        rs.Command("Zoom"+" _-Enter"+"O"+" _-Enter")#ZoomOut
+        rs.Command("Zoom o ")#ZoomOut
 
-def patch_first_object_on_layer(layername,color):
+def patch_site(layername,color):
+    rs.CurrentLayer(layername)
     rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
     surface=rs.AddPlanarSrf(rhobjs[0])
     material_index = rs.AddMaterialToObject(surface)# add new material and get its index
@@ -77,6 +81,20 @@ def patch_first_object_on_layer(layername,color):
     except:
         return False
 
+def patch_opening(layername,color):
+    rs.CurrentLayer(layername)
+    crvs = scriptcontext.doc.Objects.FindByLayer(layername)
+    for crv in crvs:
+        rs.SelectObject(crv)
+        rs.Command("extrudecrv solid=yes bothsides=yes 0.05 delete")
+    openings = scriptcontext.doc.Objects.FindByLayer(layername)
+    for opening in openings:
+        material_index = rs.AddMaterialToObject(opening)# add new material and get its index
+        rs.MaterialColor(material_index, color)# assign material color
+    #try:
+    #    return surface
+    #except:
+    #    return False
 
 def set_active_view(viewportName):
     RhinoDocument = Rhino.RhinoDoc.ActiveDoc
