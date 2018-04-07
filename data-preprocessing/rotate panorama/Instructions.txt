@@ -1,0 +1,7 @@
+Shift right click
+Windows Power Shell
+python
+space
+r
+tab
+enter
