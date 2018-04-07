@@ -32,17 +32,34 @@ def main():
             t = round(time.clock()-file_tic)
             print(filename+"\ttime:\t"+str(t))
             
+            #massing color
+            rs.CurrentLayer("MASSING")
+            m=235#patch color
+            rs.LayerColor("MASSING",(m,m,m))
+
+            #patch openings
+            p=200#patch color
+            patch_opening("DOOR",(p,p,p))#set color here
+            patch_opening("WINDOW",(p,p,p))#set color here
+            rs.LayerPrintWidth("SITE", width=0.4)#set print width here
+
+            #setting view & site lines
             rs.CurrentLayer("SITE")
-            rs.Command("SelText Delete SelPts Delete")
-            zoom_viewer("SITE")#set focus layer
-            patch_site("SITE",(255,233,233))#set color here
-            patch_opening("DOOR",(150,150,150))#set color here
-            patch_opening("WINDOW",(150,150,150))#set color here
-            rs.Command("SelCrv Delete")
-            rs.LayerPrintWidth("SITE", width=0.01)#set print width here
-            rs.Command("PrintDisplay"+"s"+" _-Enter"+"o"+" _-Enter"+" _-Enter")#ensures lineweights are displaying
+            s=120#patch color
+            rs.LayerColor("SITE",(s,s,s))
+            rs.Command("SelText Delete SelPts Delete") #delete text for zoom_viewer to work...
+            zoom_viewer("SITE",(1,-1.5,1),(0,0,0))#set focus layer,camera, target
             zoom_out()
-            capture_view_antialias(os.path.join(basepath,filename+"_antialias.png"), (1000,1000) )#changeimagesize
+            
+            #add ground plane
+            g=255#patch color
+            rs.AddLayer("GROUND_PLANE",(g,g,g))
+            rs.CurrentLayer("GROUND_PLANE")
+            rs.Command("plane c 0 1000 enter ")#create ground plane for site
+            rs.Command("PrintDisplay"+"s"+" _-Enter"+"o"+" _-Enter"+" _-Enter")#ensures lineweights are displaying
+            capture_view_antialias(os.path.join(basepath,filename+"_antialias.png"), (800,800) )#changeimagesize
+
+            #update
             fil_cnt+=1
             if fil_cnt > max_fils: break
 
@@ -53,14 +70,14 @@ def main():
     print("TOTAL\ttime:\t"+str(t))
 
 
-def zoom_viewer(layername):
+def zoom_viewer(layername,camera,focus):
         rs.CurrentLayer(layername)
         rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
         set_active_view("Perspective")
         view = rs.CurrentView()
-        set_disp_mode("Rendered")
-        rs.ViewProjection(view,2)
-        rs.ViewCameraTarget(view,(1,-1.5,1),(0,0,0))
+        set_disp_mode("Arctic")
+        rs.ViewProjection(view,1)
+        rs.ViewCameraTarget(view,camera,focus)#adjust view
         rs.ViewCameraLens(view,30)
         rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
         rs.SelectObject(rhobjs[0])
@@ -76,6 +93,7 @@ def patch_site(layername,color):
     surface=rs.AddPlanarSrf(rhobjs[0])
     material_index = rs.AddMaterialToObject(surface)# add new material and get its index
     rs.MaterialColor(material_index, color)# assign material color
+    rs.LayerColor(layername,(0,0,0))
     try:
         return surface
     except:
@@ -83,18 +101,11 @@ def patch_site(layername,color):
 
 def patch_opening(layername,color):
     rs.CurrentLayer(layername)
+    rs.LayerColor(layername,color)
     crvs = scriptcontext.doc.Objects.FindByLayer(layername)
     for crv in crvs:
         rs.SelectObject(crv)
         rs.Command("extrudecrv solid=yes bothsides=yes 0.05 delete")
-    openings = scriptcontext.doc.Objects.FindByLayer(layername)
-    for opening in openings:
-        material_index = rs.AddMaterialToObject(opening)# add new material and get its index
-        rs.MaterialColor(material_index, color)# assign material color
-    #try:
-    #    return surface
-    #except:
-    #    return False
 
 def set_active_view(viewportName):
     RhinoDocument = Rhino.RhinoDoc.ActiveDoc
