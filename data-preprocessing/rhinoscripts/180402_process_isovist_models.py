@@ -7,7 +7,7 @@ import os
 
 def main():
     #basepath = "C:\\Users\\ksteinfe\\Desktop\\TEMP" #Kyle's Desktop
-    basepath = "G:\\TEMP" #Matt's Desktop
+    basepath = "G:\\TEMP\\3dm" #Matt's Desktop
     #basepath = "C:\\Users\\Matt\\Desktop\\Temp" #Matt's Laptop
 
     max_flrs = 99 # maximum number of folders to open
@@ -32,15 +32,36 @@ def main():
             t = round(time.clock()-file_tic)
             print(filename+"\ttime:\t"+str(t))
 
-            zoom_viewer("ViewerBox",35)#set factor for how far you want to zoom out from viewer
-            patch_first_object_on_layer("ViewerBox",(255,233,233))#set color here
+            #massing color
+            rs.CurrentLayer("Context")
+            m=235#patch color
+            rs.LayerColor("Context",(m,m,m))
+
+            #setting view & site lines
+            rs.CurrentLayer("ViewerBox")
+            s=120#patch color
+            rs.LayerColor("ViewerBox",(s,s,s))
+            zoom_viewer("ViewerBox",45)#set factor for how far you want to zoom out from viewer
+            #patch_first_object_on_layer("ViewerBox",(255,233,233))#set color here
+            
+            #add ground plane
+            g=255#patch color
+            rs.AddLayer("GROUND_PLANE",(g,g,g))
+            rs.CurrentLayer("GROUND_PLANE")
+            rs.Command("plane c 0 1000 enter ")#create ground plane for site
             rs.LayerPrintWidth("ViewerBox", width=0.01)#set print width here
             rs.Command("PrintDisplay"+"s"+" _-Enter"+"o"+" _-Enter"+" _-Enter")#ensures lineweights are displaying
-            capture_view_antialias(os.path.join(basepath,filename+"_antialias.png"), (1000,1000) )#changeimagesize
+            zoom_out()
+            zoom_out()
+            zoom_out()
+            zoom_out()
+            zoom_out()
+            zoom_out()
+            zoom_out()
+            zoom_out()
+            zoom_out()
+            capture_view_antialias(os.path.join(basepath,filename+"_antialias.png"), (800,800) )#changeimagesize
             #capture_view(os.path.join(basepath,filename+".png"), (500,500) )#changeimagesize
-            width="1200" #pixel count for width
-            height="1200" #pixel count for height
-            savepath=basepath + "\\" + filename +".png"
             #rs.Command("-ViewCaptureToFile scaledrawing=yes w "+width+" h "+height+" "+savepath+" ")
             fil_cnt+=1
             if fil_cnt > max_fils: break
@@ -56,16 +77,17 @@ def zoom_viewer(layername,f):
         rs.CurrentLayer(layername)
         set_active_view("Perspective")
         view = rs.CurrentView()
-        set_disp_mode("Rendered")
-        rs.ViewProjection(view,2)
-        rs.ViewCameraTarget(view,(-1*f,1*f,1*f),(0,0,0))
+        set_disp_mode("Arctic")
+        rs.ViewProjection(view,1)
         rs.ViewCameraLens(view,30)
-        #rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
-        #rs.SelectObject(rhobjs[0])
-        #rs.ZoomSelected()
+        rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)
+        rs.SelectObject(rhobjs[0])
+        rs.ZoomSelected()
+        rs.LockObject(rhobjs[0])
+        rs.ViewCameraTarget(view,(-1*f,1*f,1*f),(0,0,0))
 
 def zoom_out():
-        rs.Command("Zoom"+" _-Enter"+"O"+" _-Enter")#ZoomOut
+        rs.Command("Zoom o ")#ZoomOut
 
 def patch_first_object_on_layer(layername,color):
     rhobjs = scriptcontext.doc.Objects.FindByLayer(layername)

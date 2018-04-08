@@ -50,6 +50,8 @@ def main():
             rs.Command("SelText Delete SelPts Delete") #delete text for zoom_viewer to work...
             zoom_viewer("SITE",(1,-1.5,1),(0,0,0))#set focus layer,camera, target
             zoom_out()
+            zoom_out()
+            zoom_out()
             
             #add ground plane
             g=255#patch color
