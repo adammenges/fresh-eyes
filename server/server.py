@@ -1,4 +1,4 @@
-MODEL_TO_LOAD = "_sample_model"
+MODEL_TO_LOAD = "_sample_b"
 
 import tensorflow as tf 
 import numpy as np
@@ -20,12 +20,30 @@ from threading import RLock
 dir_path = os.path.dirname("./")
 exported_path = os.path.join(dir_path, "saved_models", MODEL_TO_LOAD)
 
+
+###############################################################
+##                                                           ##
+##                          debugging                        ##
+##                                                           ##
+###############################################################
+
 base64String = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAA8ADwDASIAAhEBAxEB/8QAHgAAAQQDAAMAAAAAAAAAAAAAAAQFBgcBCAkCAwr/xAA+EAABAgMEBQcHDQEAAAAAAAABAAIDBBEFBhNRBxIUFSExQVKRoeHwCAkiYXGksRcYMkNTVmJygaLB0dLT/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ANGMM5Iwzknbd78vHWjd78vHWgacM5Iwzknbd78vHWvW+BDhu1XvofYgbcM5IwzknVkliDWYahZ3e/Lx1oGnDOSMM5J23e/Lx1o3e/Lx1oLRlrlOnCRLenQVPN8XJR8nc79l+4f6Wy/kFXQu7fnSpbFk3ns/bJWDd2PMMh4r4dIgmZZoNWOaeR7uFacVvd83vRH90/f5r/og4vXwu1MXcsjborNUPiCEDUHiQTmclVE1OOMUmvOuofnMdF1xrj6BLGta7FibHNRb1y0u+JtMaJWGZObcRR7yOVjeNK8FytmXHEKCTXdnKzLGu4gmhU1iQpRkTU1K+upVcWA87UwesKdR3ux/aUEjs+7MO0YRiQD9EVcMh+pXk67Eu00dF4j8J/tLrpxHCVj8fq/5WI0V2IUF8eRzpouToZ0qutu+U9s1lWnZcxZsxN4UZ+y1cyM1+pDY9z6vgth0AFMTWrRtD1VXzy78i9Ls7kb8i9Ls7kHU3zrDC/ydLDA5r4Sh9ynVyDmYJxCpa+2HRGFjzVp5R4CaY8CDEfrB3L6igxd6ATNQxTnCnkeUdjnhzqHSUaHJHWYau5il2/IvS7O5BZt3piTkYERszF1S9tB6JPwRFjSbnktjcPylVlvyL0uzuRvyL0uzuQRfaCjaCk9SipQKNoKNoKT1KKlAo2go2gpPUoqUCjaCjaCk9SipQf/Z"
 
 predictor = tf.contrib.predictor.from_saved_model(exported_path)
+# how to see what inputs are required by the model
 
-# how to see what inputs are required
-# print(predictor._feed_tensors.keys())
+console_msg = """#################### FRESH EYES ####################
+Hello from the server.py file!
+I've just loaded a saved Tensorflow model from {0}
+This model requires the following inputs to make a prediction. Note that some, but not all of these fields will be required by API calls.
+{1}
+#################### FRESH EYES ####################
+"""
+feed_tensor_keys_string = ""
+for key in predictor._feed_tensors.keys(): 
+    feed_tensor_keys_string += "\t{}\n".format(key)
+
+print(console_msg.format(exported_path, feed_tensor_keys_string))
 
 # Prove it works:
 # print(predictor({"image_bytes": [base64.decodestring(bytes(base64String, 'utf-8'))], "batch_size": 1}))
