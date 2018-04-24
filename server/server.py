@@ -1,4 +1,4 @@
-MODEL_TO_LOAD = "_sample_a"
+MODEL_TO_LOAD = "_sample_b"
 
 import tensorflow as tf 
 import numpy as np
