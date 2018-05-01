@@ -1,4 +1,4 @@
-MODEL_TO_LOAD = "_sample_a"
+MODEL_TO_LOAD = "_sample_c"
 
 import tensorflow as tf 
 import numpy as np
@@ -57,30 +57,30 @@ print(console_msg.format(exported_path, feed_tensor_keys_string))
 ###############################################################
 
 def get_lists(output):
-	lists = set()
-	for k in output.keys():
-		if 'idx' in k and '_' in k:
-			lists.add(k.split('_')[0])
-	return lists
+    lists = set()
+    for k in output.keys():
+        if 'idx' in k and '_' in k:
+            lists.add(k.split('_')[0])
+    return lists
 
 def correct_lists(output):
-	final_dict = {}
-	lists = get_lists(output)
-	# Good idea: (need to test)
-	ordered_output = OrderedDict(sorted(output.items(), key=lambda t: t[0]))
-	if len(lists) > 0:
-		for current_label in lists:
-			for k in ordered_output.keys():
-				if '_' in k and 'idx' in k and k.split('_')[0] == current_label:
-					final_dict[current_label] = final_dict.get(current_label, list())
-					final_dict[current_label].append(ordered_output[k])
-				elif '_' in k and 'idx' in k and k.split('_')[0] != current_label:
-					pass
-				else:
-					final_dict[k] = ordered_output[k]
-	else:
-		final_dict = output
-	return final_dict
+    final_dict = {}
+    lists = get_lists(output)
+    # Good idea: (need to test)
+    ordered_output = OrderedDict(sorted(output.items(), key=lambda t: t[0]))
+    if len(lists) > 0:
+        for current_label in lists:
+            for k in ordered_output.keys():
+                if '_' in k and 'idx' in k and k.split('_')[0] == current_label:
+                    final_dict[current_label] = final_dict.get(current_label, list())
+                    final_dict[current_label].append(ordered_output[k])
+                elif '_' in k and 'idx' in k and k.split('_')[0] != current_label:
+                    pass
+                else:
+                    final_dict[k] = ordered_output[k]
+    else:
+        final_dict = output
+    return final_dict
 
 
 ###############################################################
@@ -92,46 +92,51 @@ def correct_lists(output):
 
 @app.route('/')
 def root():
-	return 'Lobe says hello!\n'
+    return 'Lobe says hello!\n'
 
 @app.route('/predict', methods=['POST'])
 def predict():
-	print('/predict')
-	data = request.json
-	lhs = predictor({"image_bytes": [base64.decodestring(bytes(data['image'], 'utf-8'))], "batch_size": 1})
-	lhs = {k: v if type(v) is not np.ndarray else v.tolist() for k, v in lhs.items()}
-	for k, v in lhs.items():
-		print('*' * 80)
-		print(v)
-		print(type(v) is list)
-		if type(v) is list and type(v[0]) is bytes:
-			lhs[k] = [x.decode('UTF-8') for x in v]
-		if type(v) is list and type(v[0]) is list and type(v[0][0]) is bytes:
-			lhs[k] = [[y.decode('UTF-8') for y in x] for x in v][0]
-		elif type(v) is list and type(v[0]) is list and type(v[0][0]) is float:
-			lhs[k] = v[0]
-	lhs = correct_lists(lhs)
-	for k, v in lhs.items():
-		# if it's a list of lists
-		if type(v) is list and type(v[0]) is list:
-			print(v)
-			lhs[k] = list(zip(*v))
-	# return json.dumps({"outputs": lhs})
-	return json.dumps(lhs)
+    print('/predict')
+    data = request.json
+    
+    if 'numbers' in data:
+        lhs = predictor({"numbers": [data['numbers']],"image_bytes": [base64.decodestring(bytes(data['image'], 'utf-8'))], "batch_size": 1})
+    else:
+        lhs = predictor({"image_bytes": [base64.decodestring(bytes(data['image'], 'utf-8'))], "batch_size": 1})
+    
+    lhs = {k: v if type(v) is not np.ndarray else v.tolist() for k, v in lhs.items()}
+    for k, v in lhs.items():
+        print('*' * 80)
+        print(v)
+        print(type(v) is list)
+        if type(v) is list and type(v[0]) is bytes:
+            lhs[k] = [x.decode('UTF-8') for x in v]
+        if type(v) is list and type(v[0]) is list and type(v[0][0]) is bytes:
+            lhs[k] = [[y.decode('UTF-8') for y in x] for x in v][0]
+        elif type(v) is list and type(v[0]) is list and type(v[0][0]) is float:
+            lhs[k] = v[0]
+    lhs = correct_lists(lhs)
+    for k, v in lhs.items():
+        # if it's a list of lists
+        if type(v) is list and type(v[0]) is list:
+            print(v)
+            lhs[k] = list(zip(*v))
+    # return json.dumps({"outputs": lhs})
+    return json.dumps(lhs)
 
 @app.errorhandler(404)
 def not_found(error):
-	return 'This endpoint does not exist', 404
+    return 'This endpoint does not exist', 404
 
 @app.errorhandler(500)
 def other_errors(error):
-	return 'Something went wrong. \n\n {}'.format(error), 500
+    return 'Something went wrong. \n\n {}'.format(error), 500
 
 if __name__ == '__main__':
-	app.run(
-		# processes=2,
-		port=5008,
-		# host='0.0.0.0',
-		# ssl_context=context
-		# threaded=True
-	)
+    app.run(
+        # processes=2,
+        port=5008,
+        # host='0.0.0.0',
+        # ssl_context=context
+        # threaded=True
+    )
