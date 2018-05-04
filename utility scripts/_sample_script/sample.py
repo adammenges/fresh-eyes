@@ -1,2 +1,2 @@
 
-print "hello from this here script right here"
+print "my anaconda don't want none"
