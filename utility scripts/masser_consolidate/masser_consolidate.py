@@ -13,7 +13,7 @@ def main():
         for full_filename in files:
             filename, file_extension = os.path.splitext(full_filename)
             if file_extension != ".txt": continue
-            if filename+".png" not in files:
+            if filename+".jpg" not in files:
                 print("Orphan file found.\t{}\t{}".format(os.path.basename(root),filename))
                 continue
                 
