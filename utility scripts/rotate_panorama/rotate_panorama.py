@@ -6,7 +6,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 print(dir_path)
 
 # image file extension
-img_ext = ".png"
+img_ext = ".jpg"
 # subfolder in which to find source images
 img_src_path = os.path.join(dir_path,'img_src')
 # subfolder in which to save modified images
