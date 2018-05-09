@@ -1,6 +1,7 @@
 import os, time
 
 DELETE_FILES = True
+img_ext = ".jpg"
 
 def main():
     basepath = "W:\\Box Sync\\SG 2018 Datasets\\180314 fourview - 100"
@@ -13,7 +14,7 @@ def main():
         for full_filename in files:
             filename, file_extension = os.path.splitext(full_filename)
             if file_extension != ".txt": continue
-            if filename+".jpg" not in files:
+            if filename+img_ext not in files:
                 print("Orphan file found.\t{}\t{}".format(os.path.basename(root),filename))
                 continue
                 
