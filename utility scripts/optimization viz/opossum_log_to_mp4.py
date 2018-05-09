@@ -6,9 +6,9 @@ from zipfile import ZipFile
 """
 VARIABLES
 """
-zip_filepath = os.path.normpath("W:\\Box Sync\\SG 2018 Generators\\180404 NormalHouse to House-Massing-v02b\\Results\\Saltbox.zip")
+zip_filepath = os.path.normpath(r"C:\Users\kstei\Desktop\heart_r01.zip")
 #output_directory = os.path.dirname(zip_filepath)
-output_directory = os.path.normpath("C:\\Users\\ksteinfe\\Desktop\\TEMP")
+output_directory = os.path.normpath("C:\\Users\\kstei\\Desktop\\TEMP")
 
 frames_per_sec = 24
 show_local_best = True
@@ -64,7 +64,7 @@ for subdir_name in os.listdir(src_path):
     if not os.path.isdir(os.path.join(src_path,subdir_name)): continue
     print(subdir_name)
     
-    src_files = [os.path.join(src_path,subdir_name,file) for file in os.listdir(os.path.join(src_path,subdir_name)) if file.endswith(".png")]
+    src_files = [os.path.join(src_path,subdir_name,file) for file in os.listdir(os.path.join(src_path,subdir_name)) if file.endswith(".jpg")]
 
     if (limit_for_debugging):
         fitnesses = fitnesses[:10]
