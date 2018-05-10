@@ -106,3 +106,5 @@ ENV/
 
 # macOS
 .DS_Store
+
+*.h5

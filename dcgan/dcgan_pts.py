@@ -123,7 +123,7 @@ class DCGAN():
         print(X_train.shape) # make sure this guy is correct
 
         # Rescale -1 to 1
-        X_train = (X_train.astype(np.float32) - 127.5) / 127.5
+        # X_train = (X_train.astype(np.float32) - 127.5) / 127.5
         #X_train = np.expand_dims(X_train, axis=3)
 
         half_batch = int(batch_size / 2)
@@ -176,7 +176,7 @@ class DCGAN():
                 with open(imgpath) as f:
                     for x in f.readlines():
                         lhs.append([float(y) for y in x.split(',')])
-                
+
                 new_data = np.array(lhs)
                 #print(new_data.shape)
                 if (len(lhs)>0):
@@ -197,7 +197,7 @@ class DCGAN():
         noise = np.random.normal( 0, 1, (SAMPLESPERINTERVAL,100) )
         gen_imgs = self.generator.predict(noise)
         print (gen_imgs.shape)
-        
+
         file_count = 0
         for x in gen_imgs:
             csv = ""
@@ -206,7 +206,7 @@ class DCGAN():
             with open(os.path.join(DSTIMGPATH,'house_{}_{}.xyz'.format(epoch, file_count)), 'w') as f:
                 f.write(csv)
             file_count += 1
-        
+
 
 
 
