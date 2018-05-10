@@ -1,6 +1,6 @@
 from __future__ import print_function, division
 
-from keras.datasets import mnist
+# from keras.datasets import mnist
 from keras.layers import Input, Dense, Reshape, Flatten, Dropout
 from keras.layers import BatchNormalization, Activation, ZeroPadding2D
 from keras.layers.advanced_activations import LeakyReLU
@@ -10,13 +10,16 @@ from keras.optimizers import Adam
 
 import matplotlib.pyplot as plt
 
-import sys
+# import sys
 
 import numpy as np
 
 from PIL import Image
 import os
 import os.path
+
+# some saving stuffs
+import pickle
 
 SRCIMGPATH = r"C:\Users\kstei\Desktop\house massing gan v01 50"
 DSTIMGPATH = r"C:\Users\kstei\Desktop\TEMP"
@@ -230,6 +233,8 @@ class DCGAN():
 
 if __name__ == '__main__':
     dcgan = DCGAN()
-    dcgan.train(epochs=4000, batch_size=32, save_interval=50)
+    dcgan.train(epochs=1, batch_size=32, save_interval=50)
+    filehandler = open('saved_model.pkl', 'w')
+    pickle.dump(dcgan, filehandler)
     # dcgan.train(epochs=4000, batch_size=32, save_interval=50)
     # dcgan.train(epochs=100000, batch_size=32, save_interval=50)
