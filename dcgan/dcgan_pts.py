@@ -160,8 +160,8 @@ class DCGAN():
             # If at save interval => save generated image samples
             if epoch % save_interval == 0:
                 self.save_imgs(epoch)
-        self.generator.save('saved_generator.h5')
-        self.discriminator.save('saved_discriminator.h5')
+        self.generator.save(os.path.join(DSTIMGPATH,'pts_saved_generator.h5'))
+        self.discriminator.save(os.path.join(DSTIMGPATH,'pts_saved_discriminator.h5'))
 
     def get_images(self):
         imgpaths = [os.path.join(SRCIMGPATH, f) for f in os.listdir(SRCIMGPATH) if
@@ -199,7 +199,7 @@ class DCGAN():
             csv = ""
             for row in x.reshape(1024,3):
                 csv += """{}, {}, {} \n""".format(*row)
-            with open(os.path.join(DSTIMGPATH,'house_{}_{}.xyz'.format(epoch, file_count)), 'w') as f:
+            with open(os.path.join(DSTIMGPATH,'house_{:05d}_{:03d}.xyz'.format(epoch, file_count)), 'w') as f:
                 f.write(csv)
             file_count += 1
 
