@@ -6,9 +6,9 @@ import os, time
 
 
 #src_path = "C:\\Users\\ksteinfe\\Desktop\\TEST"
-src_path = "C:\\Users\\ksteinfe\\Desktop\\TEST"
-tar_path = "C:\\Users\\ksteinfe\\Desktop\\TEMP"
-disp_mode = "ERASEME"
+src_path = r"C:\Users\kstei\Desktop\Sebastian"
+tar_path = r"C:\Users\kstei\Desktop\TEMP SEB"
+disp_mode = "Arctic"
 cam_pos = (-1,-1,1)
 tar_pos = (0,0,0)
 lens_len = 100
@@ -16,8 +16,8 @@ image_size = (400,400)
     
 def main():
     
-    max_flrs = 99 # maximum number of folders to open
-    max_fils = 99 # maximum number of files to open in each folder
+    max_flrs = 9999 # maximum number of folders to open
+    max_fils = 9999 # maximum number of files to open in each folder
     
     folder_tic = time.clock()
     fdr_cnt = 0
@@ -36,19 +36,21 @@ def main():
             rs.DocumentModified(False)
             rs.Command('_-Open {} _Enter'.format('"'+filepath+'"'))
             
+            pln = rs.PlaneFromPoints( (100,0,0), (0,100,0), (100,100,0))
+            rs.AddRectangle(pln,100,100)
             
-            
-            set_active_view("Perspective")
+            set_active_view("Origin_SW_ISO")
             view = rs.CurrentView()
             set_disp_mode(disp_mode)
-            
+            rs.Redraw()
+            """
             rs.ViewProjection(view,2)
             rs.ViewCameraTarget(view,cam_pos,tar_pos)
             
             rs.ViewCameraLens(view,lens_len)
             rs.ZoomExtents(view)
             #rs.ViewCameraLens(view,25)
-            
+            """
             capture_view_antialias(os.path.join(tar_path,"{}.png".format(filename)), image_size )
             
             
