@@ -23,8 +23,6 @@ if not os.path.exists(DSTIMGPATH):
     print("Could not find dest path: {}".format(DSTIMGPATH))
     exit()
 
-
-
 class DCGAN():
     def __init__(self):
         # Input shape
