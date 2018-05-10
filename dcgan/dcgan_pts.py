@@ -17,10 +17,7 @@ import os.path
 
 SRCIMGPATH = r"C:\Users\kstei\Desktop\HousePts GAN v01a"
 DSTIMGPATH = r"C:\Users\kstei\Desktop\TEMP"
-img_path_plates = os.path.join(DSTIMGPATH, "plates")
-img_path_tiles = os.path.join(DSTIMGPATH, "tiles")
-
-img_dim = 32
+SAMPLESPERINTERVAL = 10
 
 if not os.path.exists(SRCIMGPATH):
     print("Could not find src path: {}".format(SRCIMGPATH))
@@ -29,8 +26,6 @@ if not os.path.exists(DSTIMGPATH):
     print("Could not find dest path: {}".format(DSTIMGPATH))
     exit()
 
-if not os.path.exists(img_path_plates): os.makedirs(img_path_plates)
-if not os.path.exists(img_path_tiles): os.makedirs(img_path_tiles)
 
 
 class DCGAN():
@@ -129,7 +124,7 @@ class DCGAN():
 
         # Rescale -1 to 1
         X_train = (X_train.astype(np.float32) - 127.5) / 127.5
-        X_train = np.expand_dims(X_train, axis=3)
+        #X_train = np.expand_dims(X_train, axis=3)
 
         half_batch = int(batch_size / 2)
 
@@ -181,11 +176,14 @@ class DCGAN():
                 with open(imgpath) as f:
                     for x in f.readlines():
                         lhs.append([float(y) for y in x.split(',')])
+                
                 new_data = np.array(lhs)
-                new_data = np.reshape(new_data, (32,32,3))
-                ret.append(new_data)
-            except:
-                print("could not load image: {}".format(imgpath))
+                #print(new_data.shape)
+                if (len(lhs)>0):
+                    new_data = np.reshape(new_data, (32,32,3))
+                    ret.append(new_data)
+            except Exception as e:
+                print("could not load xyz: {}\n{}".format(imgpath, e))
 
         ret = np.array(ret)
         print('-------------------------')
@@ -196,38 +194,24 @@ class DCGAN():
 
     def save_imgs(self, epoch):
         r, c = 10, 10  # number of images to save out (rows and columns)
-        noise = np.random.normal(0, 1, (r * c, 100))
+        noise = np.random.normal( 0, 1, (SAMPLESPERINTERVAL,100) )
         gen_imgs = self.generator.predict(noise)
+        print (gen_imgs.shape)
+        
+        file_count = 0
+        for x in gen_imgs:
+            csv = ""
+            for row in x.reshape(1024,3):
+                csv += """{}, {}, {} \n""".format(*row)
+            with open(os.path.join(DSTIMGPATH,'house_{}_{}.xyz'.format(epoch, file_count)), 'w') as f:
+                f.write(csv)
+            file_count += 1
+        
 
-        # Rescale images 0 - 1
-        gen_imgs = 0.5 * gen_imgs + 0.5
-
-        # cut PIL images to save
-        pil_imgs = [self.generated_img_to_PIL_img(nparr) for nparr in gen_imgs]
-
-        for n, img in enumerate(pil_imgs):
-            img.save(os.path.join(img_path_tiles, '{:04d}-{:03d}.png'.format(epoch, n)))
-
-        fig, axs = plt.subplots(r, c)
-        # fig.suptitle("DCGAN: Generated digits", fontsize=12)
-        cnt = 0
-        for i in range(r):
-            for j in range(c):
-                axs[i, j].imshow(gen_imgs[cnt, :, :, 0], cmap='gray')
-                axs[i, j].axis('off')
-                cnt += 1
-        fig.savefig(os.path.join(img_path_plates, "house_%d.png" % epoch))
-        plt.close()
-
-    def generated_img_to_PIL_img(self, nparr):
-        # print(nparr.shape)
-        # pxls = [ [px[0] for px in row] for row in nparr ] # pixel values are arrays of a single number for some reason
-        pxls = np.squeeze(nparr, axis=2)
-        return Image.fromarray(np.uint8(pxls * 255), 'L')
 
 
 if __name__ == '__main__':
     dcgan = DCGAN()
     #dcgan.train(epochs=1, batch_size=32, save_interval=50)
     #dcgan.train(epochs=4000, batch_size=32, save_interval=50)
-    dcgan.train(epochs=2, batch_size=32, save_interval=50000)
+    dcgan.train(epochs=200, batch_size=32, save_interval=50)
