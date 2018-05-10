@@ -177,6 +177,7 @@ class DCGAN():
             if epoch % save_interval == 0:
                 self.save_imgs(epoch)
         self.generator.save('saved_generator.h5')
+        self.discriminator.save('saved_discriminator.h5')
 
     def get_images(self):
 
