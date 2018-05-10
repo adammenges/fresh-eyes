@@ -1,6 +1,5 @@
 from __future__ import print_function, division
 
-# from keras.datasets import mnist
 from keras.layers import Input, Dense, Reshape, Flatten, Dropout
 from keras.layers import BatchNormalization, Activation, ZeroPadding2D
 from keras.layers.advanced_activations import LeakyReLU
@@ -9,8 +8,6 @@ from keras.models import Sequential, Model
 from keras.optimizers import Adam
 
 import matplotlib.pyplot as plt
-
-# import sys
 
 import numpy as np
 
@@ -24,7 +21,6 @@ img_path_plates = os.path.join(DSTIMGPATH, "plates")
 img_path_tiles = os.path.join(DSTIMGPATH, "tiles")
 
 img_dim = 32
-img_dim_qtr = int(img_dim / 4)
 
 if not os.path.exists(SRCIMGPATH):
     print("Could not find src path: {}".format(SRCIMGPATH))
@@ -40,9 +36,9 @@ if not os.path.exists(img_path_tiles): os.makedirs(img_path_tiles)
 class DCGAN():
     def __init__(self):
         # Input shape
-        self.img_rows = img_dim
-        self.img_cols = img_dim
-        self.channels = 1
+        self.img_rows = 32
+        self.img_cols = 32
+        self.channels = 3
         self.img_shape = (self.img_rows, self.img_cols, self.channels)
         self.latent_dim = 100
 
@@ -72,11 +68,10 @@ class DCGAN():
         self.combined.compile(loss='binary_crossentropy', optimizer=optimizer)
 
     def build_generator(self):
-
         model = Sequential()
 
-        model.add(Dense(128 * img_dim_qtr * img_dim_qtr, activation="relu", input_shape=(self.latent_dim,)))
-        model.add(Reshape((img_dim_qtr, img_dim_qtr, 128)))
+        model.add(Dense(128 * 8 * 8, activation="relu", input_shape=(self.latent_dim,)))
+        model.add(Reshape((8, 8, 128)))
         model.add(BatchNormalization(momentum=0.8))
         model.add(UpSampling2D())
         model.add(Conv2D(128, kernel_size=3, padding="same"))
@@ -128,12 +123,9 @@ class DCGAN():
 
     def train(self, epochs, batch_size=128, save_interval=50):
 
-        # Load the dataset
-        # (X_train, _), (_, _) = mnist.load_data()
-
         print("====================")
         X_train = self.get_images()
-        print(X_train.shape)
+        print(X_train.shape) # make sure this guy is correct
 
         # Rescale -1 to 1
         X_train = (X_train.astype(np.float32) - 127.5) / 127.5
@@ -180,14 +172,13 @@ class DCGAN():
         self.discriminator.save('saved_discriminator.h5')
 
     def get_images(self):
-
         imgpaths = [os.path.join(SRCIMGPATH, f) for f in os.listdir(SRCIMGPATH) if
                     os.path.isfile(os.path.join(SRCIMGPATH, f))]
         ret = []
         for imgpath in imgpaths:
             try:
                 lhs = []
-                with open(filename) as f:
+                with open(imgpath) as f:
                     for x in f.readlines():
                         lhs.append([float(y) for y in x.split(',')])
                 new_data = np.array(lhs)
@@ -197,7 +188,10 @@ class DCGAN():
                 print("could not load image: {}".format(imgpath))
 
         ret = np.array(ret)
+        print('-------------------------')
+        print('dataset shape')
         print(ret.shape)
+        print('-------------------------')
         return ret
 
     def save_imgs(self, epoch):
