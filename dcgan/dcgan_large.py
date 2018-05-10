@@ -18,9 +18,6 @@ from PIL import Image
 import os
 import os.path
 
-# some saving stuffs
-import pickle
-
 SRCIMGPATH = r"C:\Users\kstei\Desktop\house massing gan v01 50"
 DSTIMGPATH = r"C:\Users\kstei\Desktop\TEMP"
 img_path_plates = os.path.join(DSTIMGPATH, "plates")
@@ -179,6 +176,7 @@ class DCGAN():
             # If at save interval => save generated image samples
             if epoch % save_interval == 0:
                 self.save_imgs(epoch)
+        self.generator.save('saved_generator.h5')
 
     def get_images(self):
 
@@ -234,7 +232,5 @@ class DCGAN():
 if __name__ == '__main__':
     dcgan = DCGAN()
     dcgan.train(epochs=1, batch_size=32, save_interval=50)
-    filehandler = open('saved_model.pkl', 'w')
-    pickle.dump(dcgan, filehandler)
     # dcgan.train(epochs=4000, batch_size=32, save_interval=50)
     # dcgan.train(epochs=100000, batch_size=32, save_interval=50)
