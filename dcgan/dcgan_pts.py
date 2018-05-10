@@ -7,11 +7,8 @@ from keras.layers.convolutional import UpSampling2D, Conv2D
 from keras.models import Sequential, Model
 from keras.optimizers import Adam
 
-import matplotlib.pyplot as plt
-
 import numpy as np
 
-from PIL import Image
 import os
 import os.path
 
@@ -193,7 +190,6 @@ class DCGAN():
         return ret
 
     def save_imgs(self, epoch):
-        r, c = 10, 10  # number of images to save out (rows and columns)
         noise = np.random.normal( 0, 1, (SAMPLESPERINTERVAL,100) )
         gen_imgs = self.generator.predict(noise)
         print (gen_imgs.shape)
