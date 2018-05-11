@@ -23,7 +23,7 @@ DSTIMGPATH = r"C:\Users\kstei\Desktop\TEMP"
 img_path_plates = os.path.join(DSTIMGPATH, "plates")
 img_path_tiles = os.path.join(DSTIMGPATH, "tiles")
 
-img_dim = 100
+img_dim = 32
 img_dim_qtr = int(img_dim / 4)
 
 if not os.path.exists(SRCIMGPATH):
@@ -126,7 +126,7 @@ class DCGAN():
 
         return Model(img, validity)
 
-    def train(self, epochs, batch_size=128, save_interval=50):
+    def train(self, epochs, batch_size=128, save_interval_img=50, save_interval_model=False):
 
         # Load the dataset
         # (X_train, _), (_, _) = mnist.load_data()
@@ -174,10 +174,9 @@ class DCGAN():
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
 
             # If at save interval => save generated image samples
-            if epoch % save_interval == 0:
-                self.save_imgs(epoch)
-        self.generator.save('saved_generator.h5')
-        self.discriminator.save('saved_discriminator.h5')
+            if epoch % save_interval_img == 0: self.save_imgs(epoch)
+            if save_interval_model and epoch % save_interval_model == 0: self.save_models(epoch)
+        
 
     def get_images(self):
 
@@ -228,10 +227,13 @@ class DCGAN():
         # pxls = [ [px[0] for px in row] for row in nparr ] # pixel values are arrays of a single number for some reason
         pxls = np.squeeze(nparr, axis=2)
         return Image.fromarray(np.uint8(pxls * 255), 'L')
-
+    
+    def save_models(self, epoch):
+        self.generator.save('saved_generator-{:04d}.h5'.format(epoch))
+        self.discriminator.save('saved_discriminator-{:04d}.h5'.format(epoch))
 
 if __name__ == '__main__':
     dcgan = DCGAN()
-    #dcgan.train(epochs=1, batch_size=32, save_interval=50)
-    #dcgan.train(epochs=4000, batch_size=32, save_interval=50)
-    dcgan.train(epochs=5000, batch_size=32, save_interval=50)
+    #dcgan.train(epochs=1, batch_size=32, save_interval_img=50)
+    #dcgan.train(epochs=4000, batch_size=32, save_interval_img=50)
+    dcgan.train(epochs=10000, batch_size=32, save_interval_img=50, save_interval_model=200)
