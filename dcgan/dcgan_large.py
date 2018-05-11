@@ -18,10 +18,11 @@ from PIL import Image
 import os
 import os.path
 
-SRCIMGPATH = r"C:\Users\kstei\Desktop\house massing gan v01 50"
+SRCIMGPATH = r"C:\Users\kstei\Desktop\House GAN Training 50"
 DSTIMGPATH = r"C:\Users\kstei\Desktop\TEMP"
 img_path_plates = os.path.join(DSTIMGPATH, "plates")
 img_path_tiles = os.path.join(DSTIMGPATH, "tiles")
+img_path_models = os.path.join(DSTIMGPATH, "models")
 
 img_dim = 32
 img_dim_qtr = int(img_dim / 4)
@@ -35,6 +36,7 @@ if not os.path.exists(DSTIMGPATH):
 
 if not os.path.exists(img_path_plates): os.makedirs(img_path_plates)
 if not os.path.exists(img_path_tiles): os.makedirs(img_path_tiles)
+if not os.path.exists(img_path_tiles): os.makedirs(img_path_models)
 
 
 class DCGAN():
@@ -229,8 +231,8 @@ class DCGAN():
         return Image.fromarray(np.uint8(pxls * 255), 'L')
     
     def save_models(self, epoch):
-        self.generator.save('saved_generator-{:04d}.h5'.format(epoch))
-        self.discriminator.save('saved_discriminator-{:04d}.h5'.format(epoch))
+        self.generator.save(os.path.join(img_path_models,'saved_generator-{:04d}.h5'.format(epoch)))
+        self.discriminator.save(os.path.join(img_path_models,'saved_discriminator-{:04d}.h5'.format(epoch)))
 
 if __name__ == '__main__':
     dcgan = DCGAN()
