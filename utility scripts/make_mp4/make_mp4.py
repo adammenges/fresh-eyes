@@ -8,7 +8,7 @@ VARIABLES
 """
 img_filepath = r"C:\Users\kstei\Desktop\TEMP\walk"
 img_extension = ".png"
-output_directory = r"C:\Users\kstei\Desktop\houseGAN r05 WALKS"
+output_directory = r"C:\Users\kstei\Desktop\TEMP"
 
 output_filename = "OUT"
 frames_per_sec = 24

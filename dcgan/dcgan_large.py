@@ -24,7 +24,7 @@ img_path_plates = os.path.join(DSTIMGPATH, "plates")
 img_path_tiles = os.path.join(DSTIMGPATH, "tiles")
 img_path_models = os.path.join(DSTIMGPATH, "models")
 
-img_dim = 32
+img_dim = 40
 img_dim_qtr = int(img_dim / 4)
 
 if not os.path.exists(SRCIMGPATH):
@@ -36,7 +36,7 @@ if not os.path.exists(DSTIMGPATH):
 
 if not os.path.exists(img_path_plates): os.makedirs(img_path_plates)
 if not os.path.exists(img_path_tiles): os.makedirs(img_path_tiles)
-if not os.path.exists(img_path_tiles): os.makedirs(img_path_models)
+if not os.path.exists(img_path_models): os.makedirs(img_path_models)
 
 
 class DCGAN():
@@ -238,4 +238,4 @@ if __name__ == '__main__':
     dcgan = DCGAN()
     #dcgan.train(epochs=1, batch_size=32, save_interval_img=50)
     #dcgan.train(epochs=4000, batch_size=32, save_interval_img=50)
-    dcgan.train(epochs=10000, batch_size=32, save_interval_img=50, save_interval_model=200)
+    dcgan.train(epochs=100000, batch_size=32, save_interval_img=50, save_interval_model=1000)
