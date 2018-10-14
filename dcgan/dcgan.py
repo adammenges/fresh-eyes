@@ -1,6 +1,6 @@
 from __future__ import print_function, division
 
-from keras.datasets import mnist
+#from keras.datasets import mnist
 from keras.layers import Input, Dense, Reshape, Flatten, Dropout
 from keras.layers import BatchNormalization, Activation, ZeroPadding2D
 from keras.layers.advanced_activations import LeakyReLU
@@ -24,13 +24,13 @@ DSTIMGPATH = r"/home/ksteinfe/Desktop/TEMP"
 img_path_plates = os.path.join(DSTIMGPATH, "plates")
 img_path_tiles = os.path.join(DSTIMGPATH, "tiles")
 
-if not os.path.exists(SRCIMGPATH): 
+if not os.path.exists(SRCIMGPATH):
     print("Could not find src path: {}".format(SRCIMGPATH))
     exit()
-if not os.path.exists(DSTIMGPATH): 
+if not os.path.exists(DSTIMGPATH):
     print("Could not find dest path: {}".format(DSTIMGPATH))
     exit()
-    
+
 if not os.path.exists(img_path_plates): os.makedirs(img_path_plates)
 if not os.path.exists(img_path_tiles): os.makedirs(img_path_tiles)
 
@@ -123,17 +123,17 @@ class DCGAN():
 
         return Model(img, validity)
 
-        
-        
+
+
     def train(self, epochs, batch_size=128, save_interval=50):
 
         # Load the dataset
         #(X_train, _), (_, _) = mnist.load_data()
-        
+
         print("====================")
         X_train = self.get_images()
         print(X_train.shape)
-        
+
 
         # Rescale -1 to 1
         X_train = (X_train.astype(np.float32) - 127.5) / 127.5
@@ -177,9 +177,9 @@ class DCGAN():
             if epoch % save_interval == 0:
                 self.save_imgs(epoch)
 
-                
+
     def get_images(self):
-        
+
         imgpaths = [os.path.join(SRCIMGPATH, f) for f in os.listdir(SRCIMGPATH) if os.path.isfile(os.path.join(SRCIMGPATH, f))]
         imgpaths = list(filter(lambda p: p.endswith("jpg"),imgpaths))
         ret = []
@@ -188,11 +188,11 @@ class DCGAN():
             img = img.convert('L') #makes it greyscale
             matrix = np.array(img)
             ret.append(matrix)
-            
+
         ret = np.array(ret)
         print(ret.shape)
-        return ret                
-                
+        return ret
+
     def save_imgs(self, epoch):
         r, c = 10, 10 # number of images to save out (rows and columns)
         noise = np.random.normal(0, 1, (r * c, 100))
@@ -200,13 +200,13 @@ class DCGAN():
 
         # Rescale images 0 - 1
         gen_imgs = 0.5 * gen_imgs + 0.5
-        
+
         # cut PIL images to save
         pil_imgs = [ self.generated_img_to_PIL_img(nparr) for nparr in gen_imgs ]
-        
-        for n, img in enumerate(pil_imgs): 
+
+        for n, img in enumerate(pil_imgs):
             img.save(os.path.join(img_path_tiles,'{:04d}-{:03d}.png'.format(epoch,n)))
-        
+
         fig, axs = plt.subplots(r, c)
         #fig.suptitle("DCGAN: Generated digits", fontsize=12)
         cnt = 0
@@ -218,7 +218,7 @@ class DCGAN():
         fig.savefig(os.path.join(img_path_plates,"house_%d.png" % epoch))
         plt.close()
 
-        
+
     def generated_img_to_PIL_img(self, nparr):
         #print(nparr.shape)
         #pxls = [ [px[0] for px in row] for row in nparr ] # pixel values are arrays of a single number for some reason

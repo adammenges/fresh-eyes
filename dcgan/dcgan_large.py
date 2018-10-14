@@ -178,7 +178,7 @@ class DCGAN():
             # If at save interval => save generated image samples
             if epoch % save_interval_img == 0: self.save_imgs(epoch)
             if save_interval_model and epoch % save_interval_model == 0: self.save_models(epoch)
-        
+
 
     def get_images(self):
 
@@ -229,7 +229,7 @@ class DCGAN():
         # pxls = [ [px[0] for px in row] for row in nparr ] # pixel values are arrays of a single number for some reason
         pxls = np.squeeze(nparr, axis=2)
         return Image.fromarray(np.uint8(pxls * 255), 'L')
-    
+
     def save_models(self, epoch):
         self.generator.save(os.path.join(img_path_models,'saved_generator-{:04d}.h5'.format(epoch)))
         self.discriminator.save(os.path.join(img_path_models,'saved_discriminator-{:04d}.h5'.format(epoch)))
