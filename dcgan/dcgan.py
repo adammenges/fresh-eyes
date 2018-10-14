@@ -19,8 +19,8 @@ import os
 import os.path
 
 
-SRCIMGPATH = r"C:\Users\kstei\Desktop\house massing gan v01 28"
-DSTIMGPATH = r"C:\Users\kstei\Desktop\TEMP"
+SRCIMGPATH = r"/media/ksteinfe/DATA/RRSYNC/temp/house_gan_training_14"
+DSTIMGPATH = r"/home/ksteinfe/Desktop/TEMP"
 img_path_plates = os.path.join(DSTIMGPATH, "plates")
 img_path_tiles = os.path.join(DSTIMGPATH, "tiles")
 
@@ -181,6 +181,7 @@ class DCGAN():
     def get_images(self):
         
         imgpaths = [os.path.join(SRCIMGPATH, f) for f in os.listdir(SRCIMGPATH) if os.path.isfile(os.path.join(SRCIMGPATH, f))]
+        imgpaths = list(filter(lambda p: p.endswith("jpg"),imgpaths))
         ret = []
         for imgpath in imgpaths:
             img = Image.open(imgpath)
